@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>フローティング タグクラウド</title>
+<style>
+  body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    overflow: hidden; /* スクロールバーを隠す */
+  }
+  .tagcloud-container {
+    width: 600px; /* タグクラウドのコンテナサイズ */
+    height: 400px; /* タグクラウドのコンテナサイズ */
+    position: relative;
+  }
+  /* TagCloud.js は span 要素を生成し、それにスタイルを適用します */
+  .tagcloud--item {
+    cursor: pointer;
+    transition: color 0.2s; /* ホバー時の色変化を滑らかに */
+  }
+  .tagcloud--item:hover {
+    /* ホバー時のスタイル（例：少し明るくする、または特定の色に変える） */
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="tagcloud-container">
+  </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/TagCloud@2.2.0/dist/TagCloud.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = '.tagcloud-container';
+
+    // ファイル名などから抽出したキーワード（約30個）
+    // より適切なキーワードは、ファイルの内容を解析して抽出する必要があります。
+    const texts = [
+      'チームみらい', 'ビジョン', '政策', 'インデックス', 'デジタル時代',
+      '当たり前', '教育改革', '子育て支援', '行政効率化', '産業振興',
+      '科学技術', 'イノベーション', 'デジタル民主主義', '変化対応', 'しなやか',
+      '仕組みづくり', '経済成長', '財政健全化', '長期投資', '大胆戦略',
+      'エネルギー政策', '100日プラン', '重要分野', '未来志向', '共創社会',
+      '持続可能性', 'DX推進', '人材育成', '地域活性化', 'グローバル連携'
+    ];
+
+    // 7色のカラーパレット
+    const colors = [
+      '#FF5733', '#33FF57', '#3357FF', '#FF33A1',
+      '#A133FF', '#33FFA1', '#FF8C33'
+    ];
+
+    const options = {
+      radius: 250, // 球の半径 (px)
+      maxSpeed: 'normal', // 'slow', 'normal', 'fast'
+      initSpeed: 'normal',
+      direction: 135, // 回転方向 (0-360)
+      keep: true, // マウスアウト後もアニメーションを続けるか
+      // Use array of colors to draw texts in random colors
+      // texts will be colored randomly using colors from this array
+      // if this option is not specified, texts will be colored with their initial color
+      // color: colors, // TagCloud.js はこのオプションを直接サポートしていません。CSSで各要素に色を付けます。
+    };
+
+    // TagCloud インスタンスの生成
+    const tc = TagCloud(container, texts, options);
+
+    // タグに色を適用する
+    // TagCloud.jsが生成するspan要素を取得して色を付ける
+    // 少し待ってから要素を取得する必要がある場合があります
+    setTimeout(() => {
+      const items = document.querySelectorAll(container + ' .tagcloud--item');
+      items.forEach((item, index) => {
+        item.style.color = colors[index % colors.length];
+      });
+    }, 100); // TagCloudが要素をレンダリングするのを少し待つ
+
+  });
+</script>
+
+</body>
+</html>

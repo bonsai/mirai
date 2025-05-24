@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自画像に枠を合成</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="file"], select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .size-preview {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .size-display {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #495057;
+            min-width: 120px;
+            text-align: center;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        input[type="radio"] {
+            width: auto;
+        }
+        .submit-btn {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        .advanced-options {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        input[type="checkbox"] {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>🖼️ 自画像にwaku.gifを合成</h1>
+        <img src="waku.gif" alt="Waku GIF" style="width:200px;">
+        <form action="waku.php" method="post" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <label for="selfie_image">📷 自画像を選択してください:</label>
+                <input type="file" id="selfie_image" name="selfie_image" 
+                       accept="image/jpeg, image/png, image/gif" required>
+            </div>
+
+            <div class="form-group">
+                <label>📐 サイズ調整方法を選択:</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="auto" name="resize_mode" value="auto" checked>
+                        <label for="auto">自動調整</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="fit_frame" name="resize_mode" value="fit_frame">
+                        <label for="fit_frame">枠に合わせる</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="custom" name="resize_mode" value="custom">
+                        <label for="custom">カスタム</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="custom-size-group" style="display: none;">
+                <label for="image_scale">🔍 画像の拡大率:</label>
+                <div class="size-preview">
+                    <input type="range" id="image_scale" name="image_scale" 
+                           min="10" max="200" value="100" step="5">
+                    <div class="size-display">
+                        <span id="scale-value">100</span>%
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="position-group" style="display: none;">
+                <label>📍 画像の位置:</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="center" name="position" value="center" checked>
+                        <label for="center">中央</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="top" name="position" value="top">
+                        <label for="top">上</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="bottom" name="position" value="bottom">
+                        <label for="bottom">下</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advanced-options" style="display: none;">
+                <label>⚙️ 詳細設定:</label>
+                
+                <div class="form-group">
+                    <label for="output_format">💾 出力形式:</label>
+                    <select id="output_format" name="output_format">
+                        <option value="png">PNG (透過対応・高品質)</option>
+                        <option value="jpg">JPEG (軽量・写真向け)</option>
+                        <option value="gif">GIF (アニメーション対応)</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="high_quality" name="high_quality" checked>
+                    <label for="high_quality">高品質処理を使用</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="preserve_aspect" name="preserve_aspect" checked>
+                    <label for="preserve_aspect">縦横比を保持</label>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 30px;">
+                <input type="submit" value="🎨 合成して表示" class="submit-btn">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // スケール値の表示更新
+        const scaleSlider = document.getElementById('image_scale');
+        const scaleValue = document.getElementById('scale-value');
+        
+        scaleSlider.addEventListener('input', function() {
+            scaleValue.textContent = this.value;
+        });
+
+        // リサイズモードの切り替え
+        const resizeModeRadios = document.querySelectorAll('input[name="resize_mode"]');
+        const customSizeGroup = document.getElementById('custom-size-group');
+        const positionGroup = document.getElementById('position-group');
+
+        resizeModeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customSizeGroup.style.display = 'block';
+                    positionGroup.style.display = 'block';
+                } else {
+                    customSizeGroup.style.display = 'none';
+                    positionGroup.style.display = 'none';
+                }
+            });
+        });
+
+        // デバッグ用のキーボードショートカット
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                const form = document.querySelector('form');
+                form.action += '?debug=1';
+                alert('デバッグモードが有効になりました');
+            }
+        });
+    </script>
+</body>
+</html>
